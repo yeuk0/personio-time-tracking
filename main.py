@@ -34,10 +34,13 @@ def get_day_buttons(browser):
     return day_buttons
 
 
+def str_to_date(date_str, date_format='%Y-%m-%d'):
+    return datetime.strptime(date_str, date_format)
+
+
 def is_valid_day(date_str):
     try:
-        date = datetime.strptime(date_str, '%Y-%m-%d')
-        return date.weekday() < 5
+        return str_to_date(date_str).weekday() < 5
     except ValueError:
         return False
 
@@ -79,7 +82,7 @@ def input_hours(dialog):
 
 def calculate_time(str_time, delay=0, use_default_offset=True, offset=0):
     time_format = '%H:%M'
-    time = datetime.strptime(str_time, time_format)
+    time = str_to_date(str_time, time_format)
     offset = random.randint(0, 10) if use_default_offset else offset
     time = time + timedelta(hours=delay) + timedelta(minutes=offset *
                                                      (1 if random.randint(0, 100) <= 80 else -1))
