@@ -24,13 +24,13 @@ def go_to_attendance_page(browser):
 
 def get_day_buttons(browser):
     attendance_table = browser.find_element(By.ID, 'attendance')
-    day_buttons = []
+    day_buttons = {}
     date = datetime.today()
     for day_number in range(calendar.monthrange(date.year, date.month)[1]):
         date_str = f"{date.strftime('%Y-%m')}-{day_number+1:02d}"
         if is_valid_day(date_str):
             day = get_day_button(attendance_table, date_str)
-            day_buttons.append(day.find_element(By.TAG_NAME, 'button'))
+            day_buttons[date_str] = day.find_element(By.TAG_NAME, 'button')
     return day_buttons
 
 
@@ -43,6 +43,10 @@ def is_valid_day(date_str):
         return str_to_date(date_str).weekday() < 5
     except ValueError:
         return False
+
+
+def is_friday(date_str):
+    return str_to_date(date_str).weekday() == 4
 
 
 def get_day_button(element, date_str):
@@ -58,7 +62,10 @@ def open_input_dialog(browser, day_button):
     return find_element_by_and_wait(browser, By.XPATH, "//section[@role='dialog']")
 
 
-def input_hours(dialog):
+def input_hours(dialog, date_str):
+    time.sleep(.2)  # To let the dialog load
+    not_friday = not is_friday(date_str)
+
     start_inputs = dialog.find_elements(
         By.XPATH, "//input[@data-test-id='timerange-start']")
     end_inputs = dialog.find_elements(
@@ -67,15 +74,18 @@ def input_hours(dialog):
     start_time = '09:00'
     end_time = '17:00'
 
-    start_inputs[0].send_keys(calculate_time(start_time))
-    end_inputs[0].send_keys(calculate_time(end_time))
-    
-    start_inputs[1].send_keys(calculate_time(
-        start_time, delay=5, use_default_offset=False, offset=0))
-    end_inputs[1].send_keys(calculate_time(
-        start_time, delay=5, use_default_offset=False, offset=15))
+    start_inputs[0].send_keys(calculate_time(
+        start_time, delay=0 if not_friday else -1))
+    end_inputs[0].send_keys(calculate_time(
+        end_time, delay=0 if not_friday else -5))
 
-    time.sleep(.1)  # To allow button being enabled
+    if not_friday:
+        start_inputs[1].send_keys(calculate_time(
+            start_time, delay=5, use_default_offset=False, offset=0))
+        end_inputs[1].send_keys(calculate_time(
+            start_time, delay=5, use_default_offset=False, offset=15))
+
+    time.sleep(.1)  # To allow save button being enabled
     dialog.find_element(
         By.XPATH, "//button[@data-action-name='day-entry-save']").click()
 
@@ -102,9 +112,9 @@ if __name__ == "__main__":
     go_to_attendance_page(browser)
 
     day_buttons = get_day_buttons(browser)
-    for day_button in day_buttons:
-        dialog = open_input_dialog(browser, day_button)
-        input_hours(dialog)
+    for day, button in day_buttons.items():
+        dialog = open_input_dialog(browser, button)
+        input_hours(dialog, day)
         close_input_dialog(dialog)
         time.sleep(1)
 
