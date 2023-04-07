@@ -7,7 +7,6 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 from selenium.common.exceptions import TimeoutException
 
 
@@ -47,7 +46,7 @@ def get_day_button(element, date_str):
     try:
         return find_element_by_and_wait(element, By.XPATH, f"//div[@data-test-id='day_{date_str}']")
     except TimeoutException:
-        # This should only happen once as we're handling valid days dates
+        # This should only happen once as we're handling valid days values
         return find_element_by_and_wait(element, By.XPATH, "//div[@data-test-id='today-cell']")
 
 
@@ -73,7 +72,7 @@ def input_hours(dialog):
     end_inputs[1].send_keys(calculate_time(
         start_time, delay=5, use_default_offset=False, offset=15))
 
-    time.sleep(.1) # To allow button being enabled
+    time.sleep(.1)  # To allow button being enabled
     dialog.find_element(
         By.XPATH, "//button[@data-action-name='day-entry-save']").click()
 
