@@ -7,8 +7,9 @@ from ptt.date_utils import is_friday, str_to_date
 class Inputter:
 
     def __init__(self, base_start_time_str, base_end_time_str):
-        self.start_time = str_to_date(base_start_time_str)
-        self.end_time = str_to_date(base_end_time_str)
+        self.time_format = '%H:%M'
+        self.start_time = str_to_date(base_start_time_str, self.time_format)
+        self.end_time = str_to_date(base_end_time_str, self.time_format)
 
     def calculate_input_hours(self, date_str):
         not_friday = not is_friday(date_str)
@@ -30,14 +31,12 @@ class Inputter:
 
         return {'working_time': working_time, 'break_time': break_time, 'not_friday': not_friday}
 
-    def __calculate_time(str_time, delay=0, use_default_offset=True, offset=0):
-        time_format = '%H:%M'
-        time = str_to_date(str_time, time_format)
+    def __calculate_time(self, time, delay=0, use_default_offset=True, offset=0):
         if use_default_offset:
             offset = random.randint(
                 0, 10) * 1 if random.randint(0, 100) <= 80 else -1
-        time = time + timedelta(hours=delay) + timedelta(minutes=offset)
-        return time.strftime(time_format)
+        time += timedelta(hours=delay) + timedelta(minutes=offset)
+        return time.strftime(self.time_format)
 
     class TimeTrack:
 
