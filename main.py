@@ -3,13 +3,13 @@ import random
 
 from datetime import timedelta
 from date_utils import str_to_date, is_friday
+from inputter import Inputter
 from navigator import Navigator
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
 
 def input_hours(dialog, date_str):
-    time.sleep(.2)  # To let the dialog load
     not_friday = not is_friday(date_str)
 
     start_inputs = dialog.find_elements(
@@ -53,10 +53,13 @@ if __name__ == "__main__":
 
     navigator.go_to_attendance_page()
 
+    inputter = Inputter('09:00', '17:00')
     for day, button in navigator.get_day_buttons().items():
-        dialog = navigator.open_input_dialog(button)
-        input_hours(dialog, day)
-        navigator.close_input_dialog(dialog)
-        time.sleep(1)
+        navigator.open_input_dialog(button)
+
+        time_track = inputter.calculate_input_hours(day)
+        navigator.log_time(time_track)
+
+        navigator.close_input_dialog()
 
     navigator.quit()
