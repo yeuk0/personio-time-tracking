@@ -1,3 +1,5 @@
+import time
+
 from date_utils import get_today_date, get_days_range_from_date_month, is_valid_day
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -47,6 +49,7 @@ class Navigator:
 
     def open_input_dialog(self, day_button):
         day_button.click()
+        time.sleep(.2)  # To let the dialog load
         return self.find_element_by_and_wait(self.browser, By.XPATH, "//section[@role='dialog']")
 
     def close_input_dialog(self, dialog):
