@@ -1,52 +1,11 @@
-import calendar
 import time
 import random
 
-from datetime import datetime, timedelta
+from datetime import timedelta
+from date_utils import str_to_date, is_friday
 from navigator import Navigator
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import TimeoutException
-
-
-def get_day_buttons(browser):
-    attendance_table = browser.find_element(By.ID, 'attendance')
-    day_buttons = {}
-    date = datetime.today()
-    for day_number in range(calendar.monthrange(date.year, date.month)[1]):
-        date_str = f"{date.strftime('%Y-%m')}-{day_number+1:02d}"
-        if is_valid_day(date_str):
-            day = get_day_button(attendance_table, date_str)
-            day_buttons[date_str] = day.find_element(By.TAG_NAME, 'button')
-    return day_buttons
-
-
-def str_to_date(date_str, date_format='%Y-%m-%d'):
-    return datetime.strptime(date_str, date_format)
-
-
-def is_valid_day(date_str):
-    try:
-        return str_to_date(date_str).weekday() < 5
-    except ValueError:
-        return False
-
-
-def is_friday(date_str):
-    return str_to_date(date_str).weekday() == 4
-
-
-def get_day_button(element, date_str):
-    try:
-        return Navigator.find_element_by_and_wait(element, By.XPATH, f"//div[@data-test-id='day_{date_str}']")
-    except TimeoutException:
-        # This should only happen once as we're handling valid days values
-        return Navigator.find_element_by_and_wait(element, By.XPATH, "//div[@data-test-id='today-cell']")
-
-
-def open_input_dialog(browser, day_button):
-    day_button.click()
-    return Navigator.find_element_by_and_wait(browser, By.XPATH, "//section[@role='dialog']")
 
 
 def input_hours(dialog, date_str):
@@ -87,25 +46,19 @@ def calculate_time(str_time, delay=0, use_default_offset=True, offset=0):
     return time.strftime(time_format)
 
 
-def close_input_dialog(dialog):
-    close_button = Navigator.find_element_by_and_wait(
-        dialog, By.XPATH, "//button[@data-test-id='day-entry-dialog-close-button']")
-    close_button.click()
-
-
 if __name__ == "__main__":
     browser = webdriver.Firefox()
     navigator = Navigator(browser)
-    
+
     navigator.load()
 
     navigator.go_to_attendance_page()
 
-    day_buttons = get_day_buttons(browser)
+    day_buttons = navigator.get_day_buttons()
     for day, button in day_buttons.items():
-        dialog = open_input_dialog(browser, button)
+        dialog = navigator.open_input_dialog(button)
         input_hours(dialog, day)
-        close_input_dialog(dialog)
+        navigator.close_input_dialog(dialog)
         time.sleep(1)
 
     navigator.quit()
