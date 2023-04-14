@@ -1,6 +1,7 @@
 import time
 
 from date_utils import get_today_date, get_days_range_from_date_month, is_valid_day
+from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -10,8 +11,8 @@ from selenium.webdriver.support import expected_conditions as EC
 
 class Navigator:
 
-    def __init__(self, browser):
-        self.browser = browser
+    def __init__(self, browser_name):
+        self.browser = webdriver.Firefox()
         self.url = 'https://empathy-co.personio.de/my-desk'
 
     @staticmethod
