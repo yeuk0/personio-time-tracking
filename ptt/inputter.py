@@ -20,6 +20,7 @@ class Inputter:
 
         working_time = self.TimeTrack(start, end)
 
+        break_time = None
         if not_friday:
             start = self.__calculate_time(
                 self.start_time, delay=5, use_default_offset=False, offset=0)
