@@ -3,24 +3,10 @@ import time
 import random
 
 from datetime import datetime, timedelta
+from navigator import Navigator
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
 from selenium.common.exceptions import TimeoutException
-
-
-def find_element_by_and_wait(reference, by, value, timeout=5):
-    return WebDriverWait(reference, timeout).until(EC.presence_of_element_located((by, value)))
-
-
-def go_to_attendance_page(browser):
-    attendance_widget = find_element_by_and_wait(
-        browser, By.ID, 'attendance-widget', 60)
-    attendance_link = attendance_widget.find_element(
-        By.TAG_NAME, 'form').find_element(By.TAG_NAME, 'a')
-    attendance_link.click()
 
 
 def get_day_buttons(browser):
@@ -52,15 +38,15 @@ def is_friday(date_str):
 
 def get_day_button(element, date_str):
     try:
-        return find_element_by_and_wait(element, By.XPATH, f"//div[@data-test-id='day_{date_str}']")
+        return Navigator.find_element_by_and_wait(element, By.XPATH, f"//div[@data-test-id='day_{date_str}']")
     except TimeoutException:
         # This should only happen once as we're handling valid days values
-        return find_element_by_and_wait(element, By.XPATH, "//div[@data-test-id='today-cell']")
+        return Navigator.find_element_by_and_wait(element, By.XPATH, "//div[@data-test-id='today-cell']")
 
 
 def open_input_dialog(browser, day_button):
     day_button.click()
-    return find_element_by_and_wait(browser, By.XPATH, "//section[@role='dialog']")
+    return Navigator.find_element_by_and_wait(browser, By.XPATH, "//section[@role='dialog']")
 
 
 def input_hours(dialog, date_str):
@@ -102,25 +88,18 @@ def calculate_time(str_time, delay=0, use_default_offset=True, offset=0):
 
 
 def close_input_dialog(dialog):
-    close_button = find_element_by_and_wait(
+    close_button = Navigator.find_element_by_and_wait(
         dialog, By.XPATH, "//button[@data-test-id='day-entry-dialog-close-button']")
     close_button.click()
 
 
-def zoom_out(browser):
-    browser.set_context("chrome")
-    browser.find_element(By.TAG_NAME, "html").send_keys(Keys.COMMAND + '-')
-    browser.set_context("content")
-
-
 if __name__ == "__main__":
     browser = webdriver.Firefox()
-    browser.get('https://empathy-co.personio.de/my-desk')
+    navigator = Navigator(browser)
+    
+    navigator.load()
 
-    browser.maximize_window()
-    zoom_out(browser)
-
-    go_to_attendance_page(browser)
+    navigator.go_to_attendance_page()
 
     day_buttons = get_day_buttons(browser)
     for day, button in day_buttons.items():
@@ -129,4 +108,4 @@ if __name__ == "__main__":
         close_input_dialog(dialog)
         time.sleep(1)
 
-    browser.quit()
+    navigator.quit()
