@@ -76,7 +76,7 @@ class Navigator:
     def quit(self):
         self.browser.quit()
 
-    def __get_day_button(element, date_str):
+    def __get_day_button(self, element, date_str):
         try:
             return Navigator.find_element_by_and_wait(element, By.XPATH, f"//div[@data-test-id='day_{date_str}']")
         except TimeoutException:
