@@ -5,6 +5,7 @@ import random
 from datetime import datetime, timedelta
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
@@ -106,9 +107,18 @@ def close_input_dialog(dialog):
     close_button.click()
 
 
+def zoom_out(browser):
+    browser.set_context("chrome")
+    browser.find_element(By.TAG_NAME, "html").send_keys(Keys.COMMAND + '-')
+    browser.set_context("content")
+
+
 if __name__ == "__main__":
     browser = webdriver.Firefox()
     browser.get('https://empathy-co.personio.de/my-desk')
+
+    browser.maximize_window()
+    zoom_out(browser)
 
     go_to_attendance_page(browser)
 
