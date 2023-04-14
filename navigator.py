@@ -50,9 +50,25 @@ class Navigator:
     def open_input_dialog(self, day_button):
         day_button.click()
         time.sleep(.2)  # To let the dialog load
-        return self.find_element_by_and_wait(self.browser, By.XPATH, "//section[@role='dialog']")
 
-    def close_input_dialog(self, dialog):
+    def log_time(self, time_track):
+        dialog = self.find_element_by_and_wait(self.browser, By.XPATH, "//section[@role='dialog']")
+
+        start_inputs = dialog.find_elements(By.XPATH, "//input[@data-test-id='timerange-start']")
+        end_inputs = dialog.find_elements(By.XPATH, "//input[@data-test-id='timerange-end']")
+
+        start_inputs[0].send_keys(time_track['working_time'].start)
+        end_inputs[0].send_keys(time_track['working_time'].end)
+        
+        if time_track['not_friday']:
+            start_inputs[1].send_keys(time_track['break_time'].start)
+            end_inputs[1].send_keys(time_track['break_time'].end)
+        
+        time.sleep(.1)  # To allow save button being enabled
+        dialog.find_element(By.XPATH, "//button[@data-action-name='day-entry-save']").click()
+
+    def close_input_dialog(self):
+        dialog = self.find_element_by_and_wait(self.browser, By.XPATH, "//section[@role='dialog']") 
         close_button = self.find_element_by_and_wait(dialog, By.XPATH, "//button[@data-test-id='day-entry-dialog-close-button']")
         close_button.click()
 
