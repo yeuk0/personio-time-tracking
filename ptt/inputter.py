@@ -17,7 +17,7 @@ class Inputter:
         start = self.__calculate_time(
             self.start_time, delay=0 if not_friday else -1)
         end = self.__calculate_time(
-            self.end_time, delay=0 if not_friday else -1)
+            self.end_time, delay=0 if not_friday else -5)
 
         working_time = self.TimeTrack(start, end)
 
