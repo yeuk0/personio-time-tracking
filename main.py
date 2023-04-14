@@ -47,15 +47,13 @@ def calculate_time(str_time, delay=0, use_default_offset=True, offset=0):
 
 
 if __name__ == "__main__":
-    browser = webdriver.Firefox()
-    navigator = Navigator(browser)
+    navigator = Navigator(webdriver.Firefox())
 
     navigator.load()
 
     navigator.go_to_attendance_page()
 
-    day_buttons = navigator.get_day_buttons()
-    for day, button in day_buttons.items():
+    for day, button in navigator.get_day_buttons().items():
         dialog = navigator.open_input_dialog(button)
         input_hours(dialog, day)
         navigator.close_input_dialog(dialog)
