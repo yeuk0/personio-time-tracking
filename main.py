@@ -1,5 +1,5 @@
-from inputter import Inputter
-from navigator import Navigator
+from ptt.inputter import Inputter
+from ptt.navigator import Navigator
 
 
 if __name__ == "__main__":

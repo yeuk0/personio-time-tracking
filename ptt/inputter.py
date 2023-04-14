@@ -1,7 +1,7 @@
 import random
 
 from datetime import timedelta
-from date_utils import is_friday, str_to_date
+from ptt.date_utils import is_friday, str_to_date
 
 
 class Inputter:
