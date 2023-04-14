@@ -93,9 +93,10 @@ def input_hours(dialog, date_str):
 def calculate_time(str_time, delay=0, use_default_offset=True, offset=0):
     time_format = '%H:%M'
     time = str_to_date(str_time, time_format)
-    offset = random.randint(0, 10) if use_default_offset else offset
-    time = time + timedelta(hours=delay) + timedelta(minutes=offset *
-                                                     (1 if random.randint(0, 100) <= 80 else -1))
+    if use_default_offset:
+        offset = random.randint(
+            0, 10) * 1 if random.randint(0, 100) <= 80 else -1
+    time = time + timedelta(hours=delay) + timedelta(minutes=offset)
     return time.strftime(time_format)
 
 
