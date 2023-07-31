@@ -34,11 +34,13 @@ class Navigator:
         attendance_widget = self.find_element_by_and_wait(
             self.browser, By.ID, 'attendance-widget', 60)
         attendance_link = attendance_widget.find_element(
-            By.TAG_NAME, 'form').find_element(By.TAG_NAME, 'a')
+            By.TAG_NAME, 'form').find_element(
+            By.TAG_NAME, 'section').find_element(
+            By.TAG_NAME, 'a')
         attendance_link.click()
 
     def get_day_buttons(self):
-        attendance_table = self.browser.find_element(By.ID, 'attendance')
+        attendance_table = self.find_element_by_and_wait(self.browser, By.XPATH, "//div[starts-with(@class, 'AttendanceCalendar')]")
         day_buttons = {}
         date = get_today_date()
         for day_number in get_days_range_from_date_month(date):
@@ -53,7 +55,7 @@ class Navigator:
         time.sleep(.2)  # To let the dialog load
 
     def log_time(self, time_track):
-        dialog = self.find_element_by_and_wait(self.browser, By.XPATH, "//section[@role='dialog']")
+        dialog = self.find_element_by_and_wait(self.browser, By.XPATH, "//div[@role='dialog']")
 
         start_inputs = dialog.find_elements(By.XPATH, "//input[@data-test-id='timerange-start']")
         end_inputs = dialog.find_elements(By.XPATH, "//input[@data-test-id='timerange-end']")
@@ -67,9 +69,10 @@ class Navigator:
         
         time.sleep(.1)  # To allow save button being enabled
         dialog.find_element(By.XPATH, "//button[@data-action-name='day-entry-save']").click()
+        time.sleep(1)  # To allow dialog closing properly
 
     def close_input_dialog(self):
-        dialog = self.find_element_by_and_wait(self.browser, By.XPATH, "//section[@role='dialog']") 
+        dialog = self.find_element_by_and_wait(self.browser, By.XPATH, "//div[@role='dialog']") 
         close_button = self.find_element_by_and_wait(dialog, By.XPATH, "//button[@data-test-id='day-entry-dialog-close-button']")
         close_button.click()
 
