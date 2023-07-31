@@ -16,6 +16,4 @@ if __name__ == "__main__":
         time_track = inputter.calculate_input_hours(day)
         navigator.log_time(time_track)
 
-        navigator.close_input_dialog()
-
     navigator.quit()
