@@ -15,9 +15,9 @@ class Inputter:
         not_friday = not is_friday(date_str)
 
         start = self.__calculate_time(
-            self.start_time, delay=0 if not_friday else -1)
+            self.start_time, delay=0 if not_friday else -1, use_default_offset=False, offset=0)
         end = self.__calculate_time(
-            self.end_time, delay=0 if not_friday else -5)
+            self.end_time, delay=0 if not_friday else -5, use_default_offset=False, offset=0)
 
         working_time = self.TimeTrack(start, end)
 
@@ -34,7 +34,7 @@ class Inputter:
     def __calculate_time(self, time, delay=0, use_default_offset=True, offset=0):
         if use_default_offset:
             offset = random.randint(
-                0, 10) * 1 if random.randint(0, 100) <= 80 else -1
+                0, 5) * 1 if random.randint(0, 100) <= 80 else -1
         time += timedelta(hours=delay) + timedelta(minutes=offset)
         return time.strftime(self.time_format)
 
