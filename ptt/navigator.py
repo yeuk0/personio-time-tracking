@@ -71,11 +71,6 @@ class Navigator:
         dialog.find_element(By.XPATH, "//button[@data-action-name='day-entry-save']").click()
         time.sleep(1)  # To allow dialog closing properly
 
-    def close_input_dialog(self):
-        dialog = self.find_element_by_and_wait(self.browser, By.XPATH, "//div[@role='dialog']") 
-        close_button = self.find_element_by_and_wait(dialog, By.XPATH, "//button[@data-test-id='day-entry-dialog-close-button']")
-        close_button.click()
-
     def quit(self):
         self.browser.quit()
 
