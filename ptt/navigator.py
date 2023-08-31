@@ -51,6 +51,7 @@ class Navigator:
         return day_buttons
 
     def open_input_dialog(self, day_button):
+        time.sleep(.2)  # To let the button load
         day_button.click()
         time.sleep(.2)  # To let the dialog load
 
