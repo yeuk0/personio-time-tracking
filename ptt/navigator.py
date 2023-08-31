@@ -55,7 +55,7 @@ class Navigator:
         time.sleep(.2)  # To let the dialog load
 
     def log_time(self, time_track):
-        dialog = self.find_element_by_and_wait(self.browser, By.XPATH, "//div[@role='dialog']")
+        dialog = self.find_element_by_and_wait(self.browser, By.XPATH, "//div[@role='none']")
 
         start_inputs = dialog.find_elements(By.XPATH, "//input[@data-test-id='timerange-start']")
         end_inputs = dialog.find_elements(By.XPATH, "//input[@data-test-id='timerange-end']")
